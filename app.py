@@ -2219,3 +2219,4 @@ if __name__ == '__main__':
     print(f"[✓] Attack API system: ENABLED")
 
     app.run(host='0.0.0.0', port=port, debug=debug_mode)
+# Trigger deploy Mon Aug 10 09:59:06 UTC 2026
