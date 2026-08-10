@@ -14,7 +14,7 @@ from pymongo import MongoClient
 
 # ═══════════════════════════════════════════════════════════════════
 # ENV LOADER — supports .env file (no external dep)
-# Load order: ENV_FILE env var > overload LOADER.env > .env
+# Load order: ENV_FILE env var > OverLoad.env > .env
 # Existing os.environ values are NOT overridden (real env wins).
 # ═══════════════════════════════════════════════════════════════════
 def _load_env_file(path):
@@ -39,7 +39,7 @@ def _load_env_file(path):
         print(f"[! ENV] Failed to load {path}: {e}")
         return False
 
-_env_candidates = [os.environ.get('ENV_FILE'), 'overload LOADER.env', '.env']
+_env_candidates = [os.environ.get('ENV_FILE'), 'OverLoad.env', '.env']
 for _p in _env_candidates:
     if _load_env_file(_p):
         break
@@ -48,7 +48,7 @@ app = Flask(__name__)
 
 # ═══════════════════════════════════════════════════════════════════
 # CONFIG — values from .env, fallback to empty string
-# Set them in overload LOADER.env (local) OR Render/Railway env vars (production)
+# Set them in OverLoad.env (local) OR Render/Railway env vars (production)
 # ═══════════════════════════════════════════════════════════════════
 app.secret_key = os.getenv('FLASK_SECRET_KEY', '') or secrets.token_hex(16)
 
@@ -58,7 +58,7 @@ OWNER_PASS = os.getenv('OWNER_PASS', '')
 
 # MongoDB
 MONGO_URI = os.getenv('MONGO_URI', '')
-MONGO_DB_NAME = os.getenv('MONGO_DB_NAME', 'gouravbhai')
+MONGO_DB_NAME = os.getenv('MONGO_DB_NAME', 'overload')
 
 # Warn loudly if critical vars are missing — but don't crash on import
 _missing = [k for k, v in {
@@ -164,7 +164,7 @@ def keep_alive_ping():
         time.sleep(240)  # 4 minutes (Render idle timeout is 15 minutes)
         try:
             port = int(os.environ.get('PORT', 3000))
-            url = "https://overload-production-643f.up.railway.app/health"
+            url = f"http://localhost:{port}/health"
             response = requests.get(url, timeout=5)
             if response.status_code == 200:
                 print(f"[✓ Keep-Alive] Ping successful at {datetime.utcnow().isoformat()}")
@@ -174,13 +174,15 @@ def keep_alive_ping():
             print(f"[! Keep-Alive] Error: {e}")
         except Exception as e:
             print(f"[! Keep-Alive] Unexpected error: {e}")
+
+
 @app.route('/health', methods=['GET'])
 def health_check():
     """Simple health check endpoint for keep-alive services"""
     return jsonify({
         'status': 'alive',
         'timestamp': datetime.utcnow().isoformat() + 'Z',
-        'service': 'overload LOADER Panel',
+        'service': 'OverLoad Panel',
         'version': '4.0'
     })
 
@@ -379,7 +381,7 @@ LOGIN_TEMPLATE = '''<!doctype html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>overload LOADER Panel – Login</title>
+<title>OverLoad Panel – Login</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Plus Jakarta Sans',sans-serif}
@@ -443,7 +445,7 @@ cursor:pointer;transition:.25s;margin-top:8px;box-shadow:0 8px 24px rgba(139,92,
 <path d="M9 12l2 2 4-4" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>
 </div>
-<h1>overload LOADER</h1>
+<h1>OverLoad</h1>
 <div class="tagline">Premium Key Management & Reseller Panel</div>
 <div class="feats">
 <div class="feat"><div class="dot"></div>Secure Key Generation</div>
@@ -460,7 +462,7 @@ cursor:pointer;transition:.25s;margin-top:8px;box-shadow:0 8px 24px rgba(139,92,
 <div class="ig"><label>Password</label><input name="password" type="password" placeholder="••••••••••" required></div>
 <button type="submit" class="btn-submit">Sign In</button>
 </form>
-<div class="ft">© 2025 <span>overload LOADER</span> Premium Panel</div>
+<div class="ft">© 2026 <span>OverLoad</span> Premium Panel</div>
 </div>
 </div>
 <script>
@@ -657,7 +659,7 @@ tr:hover td{background:var(--row-hover)}
 <div class="topbar">
 <div class="brand-wrap">
 <div class="brand-icon">T</div>
-<div class="brand">overload LOADER</div>
+<div class="brand">OverLoad</div>
 </div>
 <div class="user-info">
 <span>{{ display_name }}</span>
@@ -1327,7 +1329,7 @@ def dashboard():
         r = find_reseller(session['username'])
         credits = r['credits'] if r else 0
     return render_template_string(DASHBOARD_TEMPLATE,
-        title='overload LOADER Panel',
+        title='OverLoad Panel',
         role=session['role'],
         username=session['username'],
         display_name=session['display_name'],
@@ -2208,9 +2210,9 @@ if __name__ == '__main__':
     port = int(os.environ.get('PORT', 3000))
     debug_mode = os.environ.get('FLASK_DEBUG', 'False').lower() == 'true'
 
-    print(f"[✓] Starting overload LOADER Panel v4.0 on port {port}")
+    print(f"[✓] Starting OverLoad Panel v4.0 on port {port}")
     print(f"[✓] Debug mode: {debug_mode}")
-    print(f"[✓] Health check available at: https://overload-production-643f.up.railway.app/{port}/health")
+    print(f"[✓] Health check available at: http://localhost:{port}/health")
     print(f"[✓] Keep-alive active - will ping every 4 minutes")
     print(f"[✓] 3-Step Handshake: /connect/init → /connect/verify → /connect/action")
     print(f"[✓] Response encoding: XOR + random nonce (no secrets needed)")
