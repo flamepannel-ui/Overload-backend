@@ -462,7 +462,7 @@ cursor:pointer;transition:.25s;margin-top:8px;box-shadow:0 8px 24px rgba(139,92,
 <div class="ig"><label>Password</label><input name="password" type="password" placeholder="••••••••••" required></div>
 <button type="submit" class="btn-submit">Sign In</button>
 </form>
-<div class="ft">© 2026 <span>OverLoad</span> Premium Panel</div>
+<div class="ft">© 2025 <span>OverLoad</span> Premium Panel</div>
 </div>
 </div>
 <script>
